@@ -1,26 +1,32 @@
-# my_exploration ROS2 Package
+# Human Detection and Localization 👨‍🦱📷🤖
 
 ## Overview
 
-`my_exploration` is a ROS2 package designed for autonomous robot exploration and mapping. It integrates custom navigation, mapping, and object detection capabilities, making it suitable for research and development with TurtleBot3 and simulated environments.
+This is a university project for robot perception. The task was to use sensors to localize a target in an unknown environment.  
+We implemented a **human localization system** where a TurtleBot3 Burger autonomously explores the environment and detects the presence of humans.  
+No prior information about the environment or the number of humans is provided.  
+
+To achieve this, we designed a ROS2 package called **`my_exploration`**.
 
 ## Features
-- Autonomous exploration and navigation
-- Map management and storage
-- Object detection using YOLOv5/YOLOv8
-- Launch files for easy simulation and navigation startup
-- Integration with custom and standard ROS2 nodes
+- **Human detection** using YOLOv11  
+- **Localization** with a custom Extended Kalman Filter implementation  
+- **Visualization**: publishes an image showing the explored area and detected human positions on the map  
 
 ## Key Component: `project_yolo.py`
 
-`project_yolo.py` is the main Python script for object detection in the exploration pipeline. It leverages a YOLO-based neural network to detect and segment objects from camera images during robot navigation. The script is designed to:
-- Load a YOLO model (e.g., `yolo11n-seg.pt`)
-- Process incoming images from the robot's camera
+The `project_yolo.py` file is the main Python script for human detection and localization.  
+It uses a YOLO-based neural network to detect and segment humans from the robot’s camera feed during navigation.  
+
+Main functions:
+- Load a YOLO model (e.g. `yolo11n-seg.pt`)
+- Process incoming images from the robot camera
 - Perform object detection and segmentation
-- Publish detection results to ROS2 topics for further use in navigation or mapping
+- Permorm localization using Extended Kalman Filter
+- Publish detection results to ROS2 topics for use in navigation and mapping
 
 ### Usage
-You can run `project_yolo.py` as part of your ROS2 launch sequence or as a standalone node. It is typically launched via the provided launch files, which set up the necessary parameters and topic remappings.
+You can run `project_yolo.py` either as a standalone ROS2 node or as part of the provided launch files, which handle parameters and topic remappings automatically.
 
 ## Installation
 1. Clone the repository into your ROS2 workspace `src` folder:
@@ -28,10 +34,12 @@ You can run `project_yolo.py` as part of your ROS2 launch sequence or as a stand
    cd ~/ros2/turtlebot3_ws/src
    git clone <repo_url>
    ```
+   
 2. Install dependencies (YOLO, OpenCV, etc.) as required by `project_yolo.py`:
    ```bash
    pip install -r requirements.txt
    ```
+
 3. Build the workspace:
    ```bash
    cd ~/ros2/turtlebot3_ws
@@ -40,30 +48,64 @@ You can run `project_yolo.py` as part of your ROS2 launch sequence or as a stand
    ```
 
 ## Launching
-To start navigation and object detection:
+
+First of all, source the environment for every new terminal:
+```bash
+source install/local_setup.bash
+```
+
+Start the Simulation
+```bash
+export ROS_DISTRO=humble
+export TURTLEBOT3_MODEL=waffle
+ros2 launch turtlebot3_gazebo world_human.launch.py
+```
+
+Start Nav2 stack:
 ```bash
 ros2 launch my_exploration start_nav2.launch.py
 ```
-This will launch the navigation stack and the YOLO-based detection node.
 
-## Data & Resources
-- `data/` contains sample maps and YOLO model weights
-- `my_map/` contains map files for simulation
-- `resource/` contains ROS2 resource files
-
-## Testing
-Unit tests for code style and compliance are provided in the `test/` directory:
-- `test_copyright.py`
-- `test_flake8.py`
-- `test_pep257.py`
-
-Run tests with:
+Start Detection:
 ```bash
-pytest src/my_exploration/test/
+ros2 run my_exploration project_yolo
 ```
 
+Start the exploration (we use the explore_lite package, you can use other type of exploration, like the teleop_key):
+```bash
+ros2 run explore_lite explore.launch.py
+```
+
+This setup launches the navigation stack and the YOLO-based detection node, enabling the robot to explore and localize humans.
+
+Data & Resources
+
+- data/ → sample maps and YOLO model weights
+- my_map/ → map files for simulation
+- resource/ → ROS2 resource files
+
+## Contributors
+
+- **Filippo Samorì**  
+- **Vittorio Caputo**  
+- **Matteo Bonucci**  
+
+MSc students in Automation Engineering at the University of Bologna.
+
+## Acknowledgements
+
+This project was made possible thanks to the following open-source projects and resources:
+
+- **[Explore Lite](https://github.com/hrnr/m-explore)** – ROS2 exploration package used for autonomous frontier-based exploration.
+- **[TurtleBot3 Simulation](https://github.com/ROBOTIS-GIT/turtlebot3_simulations)** – Official simulation environments for TurtleBot3 robots.
+- **[TurtleBot3](https://github.com/ROBOTIS-GIT/turtlebot3)** – Official TurtleBot3 ROS2 packages for robot configuration and navigation.
+- **[YOLO](https://github.com/ultralytics/ultralytics)** – Real-time object detection neural network used for human detection.
+  
 ## License
+
 This project is licensed under the MIT License.
 
 ## Contact
-For questions or contributions, please open an issue or pull request on the repository.
+
+For questions or contributions, feel free to reach out:
+📧 filippo.samori@studio.unibo.it
