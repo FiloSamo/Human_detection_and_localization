@@ -49,7 +49,7 @@ You can run `project_yolo.py` either as a standalone ROS2 node or as part of the
 
 ## Launching
 
-![vis](https://github.com/user-attachments/assets/0075c833-4732-4171-b5ca-d9a3d867665c)
+![vis](https://github.com/user-attachments/assets/9e8a916a-44fd-464d-998a-cfab0301873e)
 
 First of all, source the environment for every new terminal:
 ```bash
