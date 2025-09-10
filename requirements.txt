@@ -1,0 +1,5 @@
+numpy
+opencv-python
+matplotlib
+ultralytics
+# PyKDL may require system install: sudo apt install python3-pykdl
